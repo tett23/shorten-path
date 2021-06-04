@@ -1,0 +1,5 @@
+# shorten-path
+
+## License
+
+MIT
