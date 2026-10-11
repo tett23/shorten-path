@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            test: true
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-24.04-arm
+            test: true
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            test: true
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            test: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine version
+        id: version
+        run: |
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            version=${GITHUB_REF_NAME#v}
+            manifest=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -n 1)
+            if [ "$version" != "$manifest" ]; then
+              echo "Tag $GITHUB_REF_NAME does not match Cargo.toml version $manifest" >&2
+              exit 1
+            fi
+          else
+            version=$(git rev-parse --short HEAD)
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: rustup toolchain install stable --profile minimal --target ${{ matrix.target }} && rustup default stable
+      - if: matrix.test
+        run: cargo test --locked --target ${{ matrix.target }}
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Package
+        run: |
+          name=shorten-path-${{ steps.version.outputs.version }}-${{ matrix.target }}
+          mkdir "$name"
+          cp target/${{ matrix.target }}/release/shorten-path LICENSE README.md "$name/"
+          tar czf "$name.tar.gz" "$name"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: shorten-path-*.tar.gz
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create release
+        working-directory: dist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          sha256sum shorten-path-*.tar.gz > SHA256SUMS
+          prerelease=
+          case "$GITHUB_REF_NAME" in *-*) prerelease=--prerelease ;; esac
+          gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes $prerelease shorten-path-*.tar.gz SHA256SUMS

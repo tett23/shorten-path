@@ -43,6 +43,21 @@ shorten-path <PATH>
 
 - stable Rustの最新版でビルドする（edition 2024、rustc 1.85以降）。
 
+## 配布
+
+`v` から始まるタグのpushで、GitHub Releasesにビルド済みバイナリを公開する（ADR 0004）。
+
+- タグ名から `v` を除いた値は `Cargo.toml` の `version` と一致しなければならない。
+- タグ名に `-` を含む場合（`v1.0.0-rc` など）はpre-releaseとして公開する。
+- 成果物は以下のターゲットごとの `shorten-path-<version>-<target>.tar.gz` と、それらの `SHA256SUMS`。
+  - `x86_64-unknown-linux-musl`（静的リンク）
+  - `aarch64-unknown-linux-musl`（静的リンク）
+  - `aarch64-apple-darwin`
+  - `x86_64-apple-darwin`
+- アーカイブには `shorten-path-<version>-<target>/` ディレクトリの下にバイナリ、`LICENSE`、`README.md` を含む。
+- バイナリは署名・公証しない。macOSでの解除手順はREADMEに記載する。
+- `workflow_dispatch` で実行した場合はビルドのみを行い、リリースは作成しない。
+
 ## 開発プロセス
 
 - 仕様の変更はADRを作成し、レビューを受けてから実装する。
@@ -61,6 +76,7 @@ shorten-path <PATH>
 | 0001 | stable Rustの最新版でビルドできるようにする | 採択 |
 | 0002 | コミット済みADRの変更をhookで禁止する | 採択 |
 | 0003 | GitHub ActionsによるCI | 採択 |
+| 0004 | GitHub Releasesによるバイナリ配布 | 採択 |
 
 ## 破棄したADR
 
