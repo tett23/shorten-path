@@ -1,20 +1,14 @@
-#![feature(box_syntax)]
-
-extern crate dirs;
-
-use std::{env, path::Path, path::PathBuf, path::MAIN_SEPARATOR};
+use std::{env, path::MAIN_SEPARATOR, path::MAIN_SEPARATOR_STR, path::Path, path::PathBuf};
 
 fn main() {
-    let arg = env::args();
-    let path = arg.last();
+    let path = env::args().next_back();
     let path = path.expect("msg");
 
-    let rules: Vec<Box<dyn Fn(String) -> String>> = vec![box replace_home, box shorten_dirs];
+    let rules: Vec<Box<dyn Fn(String) -> String>> =
+        vec![Box::new(replace_home), Box::new(shorten_dirs)];
     let ret = rules.iter().fold(path, |acc, f| f(acc));
 
-    print!("{}", &ret);
-
-    ()
+    print!("{}", ret);
 }
 
 fn replace_home(buf: String) -> String {
@@ -32,12 +26,7 @@ fn shorten_dirs(buf: String) -> String {
     match buf.starts_with("~") {
         true => {
             let path = Path::new(&buf);
-            let file_name: &str = &path
-                .file_name()
-                .expect("msg")
-                .to_str()
-                .expect("msg")
-                .to_string();
+            let file_name: &str = path.file_name().expect("msg").to_str().expect("msg");
 
             let parent_elems: &str = &path
                 .parent()
@@ -49,15 +38,42 @@ fn shorten_dirs(buf: String) -> String {
                 .map(|v| v.chars().next().expect("msg"))
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
-                .join(&MAIN_SEPARATOR.to_string());
+                .join(MAIN_SEPARATOR_STR);
 
             let tmp: Vec<&str> = vec![parent_elems, file_name];
 
             tmp.into_iter()
                 .filter(|v| !v.is_empty())
                 .collect::<Vec<&str>>()
-                .join(&MAIN_SEPARATOR.to_string())
+                .join(MAIN_SEPARATOR_STR)
         }
         false => buf,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shorten_dirs_shortens_parent_dirs() {
+        assert_eq!(shorten_dirs("~/foo/bar/baz".to_string()), "~/f/b/baz");
+    }
+
+    #[test]
+    fn shorten_dirs_keeps_direct_child_of_home() {
+        assert_eq!(shorten_dirs("~/foo".to_string()), "~/foo");
+    }
+
+    #[test]
+    fn shorten_dirs_ignores_path_outside_home() {
+        assert_eq!(shorten_dirs("/usr/local/bin".to_string()), "/usr/local/bin");
+    }
+
+    #[test]
+    fn replace_home_replaces_home_prefix() {
+        let home = dirs::home_dir().unwrap();
+        let path = home.join("foo").to_str().unwrap().to_string();
+        assert_eq!(replace_home(path), "~/foo");
     }
 }

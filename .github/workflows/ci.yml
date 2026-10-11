@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install stable --profile minimal --component rustfmt,clippy && rustup default stable
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo test --locked
+
+  adr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - if: github.event_name == 'pull_request'
+        run: scripts/check-adr-immutable.sh "origin/${{ github.base_ref }}" HEAD
+      - if: github.event_name == 'push'
+        run: scripts/check-adr-immutable.sh "${{ github.event.before }}" HEAD
