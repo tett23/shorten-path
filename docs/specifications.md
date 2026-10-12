@@ -16,7 +16,8 @@ shorten-path <PATH>
 以下の規則を順に適用する。
 
 1. ホームディレクトリの置換
-   - `PATH` がホームディレクトリ（`dirs::home_dir()`）の文字列で始まる場合、その部分を `~` に置き換える。
+   - `PATH` がホームディレクトリの文字列で始まる場合、その部分を `~` に置き換える。
+   - ホームディレクトリは `std::env::home_dir()` で取得する。環境変数 `HOME` が空でなければその値を、空または未設定ならパスワードデータベース（`getpwuid_r`）の値を使う。
    - 判定は文字列の前方一致で行い、パスの区切りは考慮しない。
 2. 親ディレクトリの短縮
    - 規則1の結果が `~` で始まる場合のみ適用する。
@@ -80,6 +81,7 @@ shorten-path <PATH>
 | [0004](adr/0004-binary-distribution.md) | GitHub Releasesによるバイナリ配布 | 採択 |
 | [0005](adr/0005-migrate-to-adr-guard.md) | ADRの変更検査をadr-guardに移行する | 採択 |
 | [0006](adr/0006-update-actions-major-versions.md) | GitHub Actionsのアクションを最新のメジャー版に更新する | 採択 |
+| [0007](adr/0007-zero-dependencies.md) | 外部クレートへの依存をなくす | 採択 |
 
 ## 破棄したADR
 
