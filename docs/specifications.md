@@ -43,6 +43,7 @@ shorten-path <PATH>
 ## 動作環境
 
 - stable Rustの最新版でビルドする（edition 2024、rustc 1.85以降）。
+- 対象はLinuxとmacOS。Windowsは対象外（[ADR 0004](adr/0004-binary-distribution.md)、[ADR 0007](adr/0007-zero-dependencies.md)）。
 
 ## 配布
 
