@@ -79,6 +79,7 @@ shorten-path <PATH>
 | [0003](adr/0003-ci.md) | GitHub ActionsによるCI | 採択→adrジョブはADR 0005 |
 | [0004](adr/0004-binary-distribution.md) | GitHub Releasesによるバイナリ配布 | 採択 |
 | [0005](adr/0005-migrate-to-adr-guard.md) | ADRの変更検査をadr-guardに移行する | 採択 |
+| [0006](adr/0006-update-actions-major-versions.md) | GitHub Actionsのアクションを最新のメジャー版に更新する | 採択 |
 
 ## 破棄したADR
 

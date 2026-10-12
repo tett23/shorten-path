@@ -27,7 +27,9 @@ jobs:
             test: false
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Determine version
         id: version
         run: |
@@ -54,7 +56,7 @@ jobs:
           mkdir "$name"
           cp target/${{ matrix.target }}/release/shorten-path LICENSE README.md "$name/"
           tar czf "$name.tar.gz" "$name"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.target }}
           path: shorten-path-*.tar.gz
@@ -67,7 +69,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
