@@ -1,6 +1,6 @@
 # shorten-path 仕様
 
-このドキュメントは現時点の仕様を表す。仕様の変更はADR（`docs/adr/`）を経て行い、その都度このドキュメントを更新する。
+このドキュメントは現時点の仕様を表す。仕様の変更はADR（[`docs/adr/`](adr/)）を経て行い、その都度このドキュメントを更新する。
 
 ## コマンド
 
@@ -45,7 +45,7 @@ shorten-path <PATH>
 
 ## 配布
 
-`v` から始まるタグのpushで、GitHub Releasesにビルド済みバイナリを公開する（ADR 0004）。
+`v` から始まるタグのpushで、GitHub Releasesにビルド済みバイナリを公開する（[ADR 0004](adr/0004-binary-distribution.md)）。
 
 - タグ名から `v` を除いた値は `Cargo.toml` の `version` と一致しなければならない。
 - タグ名に `-` を含む場合（`v1.0.0-rc` など）はpre-releaseとして公開する。
@@ -61,11 +61,11 @@ shorten-path <PATH>
 ## 開発プロセス
 
 - 仕様の変更はADRを作成し、レビューを受けてから実装する。
-- コミット済みのADRは、`ステータス:` の行を除いて変更できない（ADR 0002）。
+- コミット済みのADRは、`ステータス:` の行を除いて変更できない（[ADR 0002](adr/0002-adr-immutability-hooks.md)）。
   - Claude Codeの `PreToolUse` hook（`.claude/hooks/protect-adr.sh`）で編集を拒否する。
   - gitのpre-commit hook（`.githooks/pre-commit`）でコミットを拒否する。
   - CIで同じ検査（`scripts/check-adr-immutable.sh`）を行う。
-- CI（ADR 0003）はGitHub Actionsで、`main` へのpushとpull requestごとに以下を実行する。
+- CI（[ADR 0003](adr/0003-ci.md)）はGitHub Actionsで、`main` へのpushとpull requestごとに以下を実行する。
   - `cargo fmt --check`、`cargo clippy --all-targets --locked -- -D warnings`、`cargo test --locked`（Ubuntu、macOS）
   - コミット済みADRの変更検査
 
@@ -73,10 +73,10 @@ shorten-path <PATH>
 
 | 番号 | タイトル | ステータス |
 | --- | --- | --- |
-| 0001 | stable Rustの最新版でビルドできるようにする | 採択 |
-| 0002 | コミット済みADRの変更をhookで禁止する | 採択 |
-| 0003 | GitHub ActionsによるCI | 採択 |
-| 0004 | GitHub Releasesによるバイナリ配布 | 採択 |
+| [0001](adr/0001-build-on-stable-rust.md) | stable Rustの最新版でビルドできるようにする | 採択 |
+| [0002](adr/0002-adr-immutability-hooks.md) | コミット済みADRの変更をhookで禁止する | 採択 |
+| [0003](adr/0003-ci.md) | GitHub ActionsによるCI | 採択 |
+| [0004](adr/0004-binary-distribution.md) | GitHub Releasesによるバイナリ配布 | 採択 |
 
 ## 破棄したADR
 
