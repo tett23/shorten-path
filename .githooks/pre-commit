@@ -1,2 +1,2 @@
 #!/bin/sh
-exec scripts/check-adr-immutable.sh
+exec adr-guard pre-commit

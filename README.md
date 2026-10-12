@@ -46,13 +46,15 @@ cargo build --release
 
 ## 開発
 
-clone後に、コミット済みADRの変更を禁止するgit hookを有効にする。
+コミット済みADRの変更は [adr-guard](https://github.com/tett23/adr-guard) で禁止している。
+adr-guardを[インストール](https://github.com/tett23/adr-guard#インストール)したうえで、clone後にgit hookを有効にする。
+adr-guardが無いと、pre-commit hookがすべてのコミットを拒否する。
 
 ```sh
 git config core.hooksPath .githooks
 ```
 
-Claude Code用のhookは `.claude/settings.json` で設定済みで、`jq` が必要。
+Claude Codeを使う場合は、ユーザー設定（`~/.claude/settings.json`）で `adr-guard claude-hook` を有効にする。手順はadr-guardのREADMEを参照。
 
 設計判断は [docs/adr/](docs/adr/) にADRとして記録する。
 
