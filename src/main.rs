@@ -4,20 +4,22 @@ fn main() {
     let path = env::args().next_back();
     let path = path.expect("msg");
 
-    let rules: Vec<Box<dyn Fn(String) -> String>> =
-        vec![Box::new(replace_home), Box::new(shorten_dirs)];
+    let home: Option<PathBuf> = env::home_dir();
+    let home = home.expect("msg");
+    let home = home.to_str().expect("msg").to_owned();
+
+    let rules: Vec<Box<dyn Fn(String) -> String>> = vec![
+        Box::new(move |buf| replace_home(buf, &home)),
+        Box::new(shorten_dirs),
+    ];
     let ret = rules.iter().fold(path, |acc, f| f(acc));
 
     print!("{}", ret);
 }
 
-fn replace_home(buf: String) -> String {
-    let home: Option<PathBuf> = dirs::home_dir();
-    let home = home.expect("msg");
-    let home = home.to_str().expect("msg").to_owned();
-
-    match buf.starts_with(&home) {
-        true => buf.replace(&home, "~"),
+fn replace_home(buf: String, home: &str) -> String {
+    match buf.starts_with(home) {
+        true => buf.replace(home, "~"),
         false => buf.clone(),
     }
 }
@@ -72,8 +74,30 @@ mod tests {
 
     #[test]
     fn replace_home_replaces_home_prefix() {
-        let home = dirs::home_dir().unwrap();
-        let path = home.join("foo").to_str().unwrap().to_string();
-        assert_eq!(replace_home(path), "~/foo");
+        assert_eq!(
+            replace_home("/home/alice/foo".to_string(), "/home/alice"),
+            "~/foo"
+        );
+    }
+
+    #[test]
+    fn replace_home_replaces_home_itself() {
+        assert_eq!(replace_home("/home/alice".to_string(), "/home/alice"), "~");
+    }
+
+    #[test]
+    fn replace_home_ignores_path_outside_home() {
+        assert_eq!(
+            replace_home("/usr/local/bin".to_string(), "/home/alice"),
+            "/usr/local/bin"
+        );
+    }
+
+    #[test]
+    fn replace_home_matches_by_string_prefix() {
+        assert_eq!(
+            replace_home("/home/alicefoo/bar".to_string(), "/home/alice"),
+            "~foo/bar"
+        );
     }
 }
