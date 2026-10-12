@@ -61,10 +61,11 @@ shorten-path <PATH>
 ## 開発プロセス
 
 - 仕様の変更はADRを作成し、レビューを受けてから実装する。
-- コミット済みのADRは、`ステータス:` の行を除いて変更できない（[ADR 0002](adr/0002-adr-immutability-hooks.md)）。
-  - Claude Codeの `PreToolUse` hook（`.claude/hooks/protect-adr.sh`）で編集を拒否する。
-  - gitのpre-commit hook（`.githooks/pre-commit`）でコミットを拒否する。
-  - CIで同じ検査（`scripts/check-adr-immutable.sh`）を行う。
+- コミット済みのADRは、`ステータス:` の行を除いて変更できない。削除・リネームもできない（[ADR 0005](adr/0005-migrate-to-adr-guard.md)）。
+  - 検査には [adr-guard](https://github.com/tett23/adr-guard) を使う。
+  - gitのpre-commit hook（`.githooks/pre-commit`）が `adr-guard pre-commit` でコミットを拒否する。
+  - CIの `adr` ジョブが `tett23/adr-guard` のactionで、範囲内の各コミットを検査する。
+  - Claude Codeのhookはリポジトリには置かず、開発者のユーザー設定で `adr-guard claude-hook` を有効にする。
 - CI（[ADR 0003](adr/0003-ci.md)）はGitHub Actionsで、`main` へのpushとpull requestごとに以下を実行する。
   - `cargo fmt --check`、`cargo clippy --all-targets --locked -- -D warnings`、`cargo test --locked`（Ubuntu、macOS）
   - コミット済みADRの変更検査
@@ -74,9 +75,10 @@ shorten-path <PATH>
 | 番号 | タイトル | ステータス |
 | --- | --- | --- |
 | [0001](adr/0001-build-on-stable-rust.md) | stable Rustの最新版でビルドできるようにする | 採択 |
-| [0002](adr/0002-adr-immutability-hooks.md) | コミット済みADRの変更をhookで禁止する | 採択 |
-| [0003](adr/0003-ci.md) | GitHub ActionsによるCI | 採択 |
+| [0002](adr/0002-adr-immutability-hooks.md) | コミット済みADRの変更をhookで禁止する | 採択→ADR 0005 |
+| [0003](adr/0003-ci.md) | GitHub ActionsによるCI | 採択→adrジョブはADR 0005 |
 | [0004](adr/0004-binary-distribution.md) | GitHub Releasesによるバイナリ配布 | 採択 |
+| [0005](adr/0005-migrate-to-adr-guard.md) | ADRの変更検査をadr-guardに移行する | 採択 |
 
 ## 破棄したADR
 
