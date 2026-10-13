@@ -1,6 +1,6 @@
 # ADR 0005: ADRの変更検査をadr-guardに移行する
 
-ステータス: 採択
+ステータス: 採択→指定するバージョンとhookのオプションは[ADR 0008](0008-update-adr-guard-to-v0.8.0.md)
 
 ## 文脈
 
@@ -77,7 +77,7 @@ adr:
 - `check` ジョブや `.github/workflows/release.yml` の `actions/checkout`、`actions/upload-artifact`、`actions/download-artifact` のメジャー版の更新は行わない。Node 24以降で動く最新版への更新は別のADRで扱う。本ADRの `adr` ジョブは、adr-guardのREADMEの例に合わせて `actions/checkout@v7` を使う。
 - adr-guardの自動インストール（`mise` の設定ファイルなど）はリポジトリに含めない。インストール方法は開発者に任せる。
 - 監査や性能計測のスナップショットなど、ADR以外の変更不可ファイルの検査は行わない（[ADR 0002](0002-adr-immutability-hooks.md) と同じ）。
-- 過去のコミット（ADR 0002〜0004をリンク化したコミット）を書きかえることはしない。CIの検査範囲は移行後のpushからになるため、影響しない。
+- 過去のコミット（[ADR 0002](0002-adr-immutability-hooks.md)〜0004をリンク化したコミット）を書きかえることはしない。CIの検査範囲は移行後のpushからになるため、影響しない。
 
 ## テスト設計
 
@@ -88,7 +88,7 @@ adr:
 - Claude Codeのhook
   - 独自hookを削除したあとも、コミット済みADRの本文のEditがユーザー全体の設定の `adr-guard claude-hook` で拒否されることを確認する。
 - CI
-  - 移行のpull requestで `adr` ジョブが成功することを確認する。このpull requestには、ADR 0002と0003のステータス行の変更が含まれる。
+  - 移行のpull requestで `adr` ジョブが成功することを確認する。このpull requestには、[ADR 0002](0002-adr-immutability-hooks.md)と0003のステータス行の変更が含まれる。
   - `adr-guard check-range <base> <head>` を、コミット済みADRの本文を書きかえたコミットを含む範囲に対して手元で実行し、失敗することを確認する。
 
 ## トレードオフ
