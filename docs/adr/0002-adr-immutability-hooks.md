@@ -1,6 +1,6 @@
 # ADR 0002: コミット済みADRの変更をhookで禁止する
 
-ステータス: 採択→ADR 0005
+ステータス: 採択→[ADR 0005](0005-migrate-to-adr-guard.md)
 
 ## 文脈
 
