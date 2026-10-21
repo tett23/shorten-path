@@ -64,14 +64,15 @@ shorten-path <PATH>
 
 - 仕様の変更はADRを作成し、レビューを受けてから実装する。
 - コミット済みのADRは、`ステータス:` の行を除いて変更できない。削除・リネームもできない（[ADR 0005](adr/0005-migrate-to-adr-guard.md)）。
-  - 検査には [adr-guard](https://github.com/tett23/adr-guard) v0.8.2 を使う（[ADR 0010](adr/0010-update-adr-guard-to-v0.8.2.md)）。
+  - 検査には [adr-guard](https://github.com/tett23/adr-guard) v0.8.3 を使う（[ADR 0011](adr/0011-update-adr-guard-to-v0.8.3.md)）。
   - gitのpre-commit hook（`.githooks/pre-commit`）が `adr-guard pre-commit --allow-status --allow-links` でコミットを拒否する。
-  - CIの `adr` ジョブが `tett23/adr-guard` のaction（バージョンのタグで指定。現在は `v0.8.2`）で、範囲内の各コミットを検査する（`check-range --allow-status --allow-links`）。あわせて `links` と `check-status` を実行する。
+  - CIの `adr` ジョブが `tett23/adr-guard` のaction（バージョンのタグで指定。現在は `v0.8.3`）で、範囲内の各コミットを検査する（`check-range --allow-status --allow-links`）。あわせて `links` と `check-status` を実行する。
   - Claude Codeのhookはリポジトリには置かず、開発者のユーザー設定で `adr-guard claude-hook --allow-status` を有効にする。
 - コミット済みのADRのステータスの行の変更は、pre-commit hookとCIで許可する（`--allow-status`、[ADR 0008](adr/0008-update-adr-guard-to-v0.8.0.md)）。adr-guard v0.5.0 以降では、`--allow-status` を付けないとステータスの行も変更できない。
 - コミット済みのADRのリンクだけの変更（インラインリンクと参照形式のリンクの追加・削除・リンク先の変更、画像のリンク先の変更、リンクの参照定義の行の変更）は、pre-commit hookとCIで許可する（`--allow-links`、[ADR 0008](adr/0008-update-adr-guard-to-v0.8.0.md)、[ADR 0010](adr/0010-update-adr-guard-to-v0.8.2.md)）。リンクのテキストの変更、画像の追加・削除、自動リンクや本文のURLの変更は許可しない。
 - 文書（`.md`）の中のADRの参照（`ADR 0001` の形）には、ADRのファイルへのリンクを付ける。リンクが無ければ、pre-commit hookとCIの `adr` ジョブ（`adr-guard links`）でエラーになる（[ADR 0008](adr/0008-update-adr-guard-to-v0.8.0.md)）。`adr-guard links --fix` で付けられる。
 - ADRは、行頭が `ステータス:` のステータスの行をちょうど1つ持つ。無いADRと2つ以上あるADRは、pre-commit hookとCIの `adr` ジョブ（`adr-guard check-status`）でエラーになる（[ADR 0008](adr/0008-update-adr-guard-to-v0.8.0.md)）。
+- 採択されたがまだ実装されていないADRのステータスは `採択（未実装）` とする。`adr-guard unimplemented` で一覧できる（[ADR 0011](adr/0011-update-adr-guard-to-v0.8.3.md)）。
 - `docs/audit/`・`docs/audits/`・`docs/benchmarks/`・`docs/benchmark/` に置く記録（監査や性能計測のスナップショット）は、コミット後は変更・削除・移動できない。`--allow-status` と `--allow-links` も記録には効かない（[ADR 0008](adr/0008-update-adr-guard-to-v0.8.0.md)、[ADR 0009](adr/0009-update-adr-guard-to-v0.8.1.md)）。
 - CI（[ADR 0003](adr/0003-ci.md)）はGitHub Actionsで、`main` へのpushとpull requestごとに以下を実行する。
   - `cargo fmt --check`、`cargo clippy --all-targets --locked -- -D warnings`、`cargo test --locked`（Ubuntu、macOS）
@@ -90,7 +91,8 @@ shorten-path <PATH>
 | [0007](adr/0007-zero-dependencies.md) | 外部クレートへの依存をなくす | 採択 |
 | [0008](adr/0008-update-adr-guard-to-v0.8.0.md) | adr-guard を v0.8.0 に上げ、ステータスの行とリンクの変更を許可する | 採択→指定するバージョンは[ADR 0009](adr/0009-update-adr-guard-to-v0.8.1.md) |
 | [0009](adr/0009-update-adr-guard-to-v0.8.1.md) | adr-guard を v0.8.1 に上げる | 採択→指定するバージョンは[ADR 0010](adr/0010-update-adr-guard-to-v0.8.2.md) |
-| [0010](adr/0010-update-adr-guard-to-v0.8.2.md) | adr-guard を v0.8.2 に上げる | 採択 |
+| [0010](adr/0010-update-adr-guard-to-v0.8.2.md) | adr-guard を v0.8.2 に上げる | 採択→指定するバージョンは[ADR 0011](adr/0011-update-adr-guard-to-v0.8.3.md) |
+| [0011](adr/0011-update-adr-guard-to-v0.8.3.md) | adr-guard を v0.8.3 に上げる | 採択 |
 
 ## 破棄したADR
 
