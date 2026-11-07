@@ -47,11 +47,11 @@ cargo build --release
 ## 開発
 
 コミット済みADRの変更は [adr-guard](https://github.com/tett23/adr-guard) で禁止している。
-adr-guard v0.8.3以降を[インストール](https://github.com/tett23/adr-guard#インストール)したうえで、clone後にgit hookを有効にする。
-adr-guardが無いと、pre-commit hookがすべてのコミットを拒否する。v0.5.0より古いと、引数の誤りでコミットが止まる。v0.8.1より古いと、ステータスの行の検査と記録の保護の一部または全部が手元では行われない。v0.8.2より古いと、リンクだけの変更の一部が手元では拒否される。v0.8.3より古いと、`adr-guard unimplemented` が使えない。
+adr-guard v0.10.0以降を[インストール](https://github.com/tett23/adr-guard#インストール)したうえで、clone後にgit hookを有効にする。
+adr-guardが無いと、pre-commit hookがすべてのコミットを拒否する。v0.5.0より古いと、引数の誤りでコミットが止まる。v0.8.1より古いと、ステータスの行の検査と記録の保護の一部または全部が手元では行われない。v0.8.2より古いと、リンクだけの変更の一部が手元では拒否される。v0.8.3より古いと、`adr-guard unimplemented` が使えない。v0.10.0より古いと、ADRの番号の重複と修飾子付きの参照の検査が手元では行われない。
 
 ```sh
-cargo install --git https://github.com/tett23/adr-guard --tag v0.8.3
+cargo install --git https://github.com/tett23/adr-guard --tag v0.10.0
 git config core.hooksPath .githooks
 ```
 
@@ -59,8 +59,10 @@ Claude Codeを使う場合は、ユーザー設定（`~/.claude/settings.json`�
 
 コミット済みADRのステータスの行の変更と、リンクだけの変更（リンクの追加・削除・リンク先の変更。リンクのテキストの変更は除く）は、pre-commit hookとCIの `--allow-status` と `--allow-links` で許可される。
 文書（`.md`）の中のADRの参照（`ADR 0001` の形）には、ADRのファイルへのリンクが要る。リンクが無いと、pre-commit hookとCIでエラーになる。`adr-guard links --fix` で付けられる。
+参照の直前の語（空白1つを挟む）は修飾子として扱われ、`/` を含む語はディレクトリ、`-` を含む語はモジュール（`docs/<モジュール>/adr/`）を指す。修飾子はリンクのテキストに含める。指す先の無い修飾子付きの参照はエラーになるので、ほかのリポジトリのADRは、リンクのテキストごと外部リンクにして書く。
 ADRには、行頭が `ステータス:` のステータスの行をちょうど1つ書く。無いADRと2つ以上あるADRは、pre-commit hookとCI（`adr-guard check-status`）でエラーになる。
 採択されたがまだ実装されていないADRのステータスは `採択（未実装）` とする。`adr-guard unimplemented` で一覧できる。
+ADRの番号が重複すると、CI（`adr-guard check-numbers`）でエラーになる。`adr-guard renumber` で振りなおせる。
 `docs/audit/`・`docs/audits/`・`docs/benchmarks/`・`docs/benchmark/` に置く記録（監査や性能計測のスナップショット）も、コミット後は変更・削除・移動できない。記録には `--allow-status` と `--allow-links` も効かない。
 
 設計判断は [docs/adr/](docs/adr/) にADRとして記録する。
