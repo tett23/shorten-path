@@ -1,6 +1,6 @@
 # ADR 0005: ADRの変更検査をadr-guardに移行する
 
-ステータス: 採択→指定するバージョンとhookのオプションは[ADR 0008](0008-update-adr-guard-to-v0.8.0.md)
+Status: superseded [{"by":["docs/adr/0008-update-adr-guard-to-v0.8.0.md"],"part":"指定するバージョンとhookのオプション"}]
 
 ## 文脈
 

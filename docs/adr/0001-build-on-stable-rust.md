@@ -1,6 +1,6 @@
 # ADR 0001: stable Rustの最新版でビルドできるようにする
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 
