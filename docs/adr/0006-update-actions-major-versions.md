@@ -1,6 +1,6 @@
 # ADR 0006: GitHub Actionsのアクションを最新のメジャー版に更新する
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 

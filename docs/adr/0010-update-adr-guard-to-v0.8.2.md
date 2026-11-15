@@ -1,6 +1,6 @@
 # ADR 0010: adr-guard を v0.8.2 に上げる
 
-ステータス: 採択→指定するバージョンは[ADR 0011](0011-update-adr-guard-to-v0.8.3.md)
+Status: superseded [{"by":["docs/adr/0011-update-adr-guard-to-v0.8.3.md"],"part":"指定するバージョン"}]
 
 ## 文脈
 

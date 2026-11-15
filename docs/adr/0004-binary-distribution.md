@@ -1,6 +1,6 @@
 # ADR 0004: GitHub Releasesによるバイナリ配布
 
-ステータス: 採択
+Status: accepted
 
 ## 文脈
 
